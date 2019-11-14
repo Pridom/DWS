@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
-#include <ncurses.h>
+#include <conio.h>
 
 //saving current time info in struct tm;
 
