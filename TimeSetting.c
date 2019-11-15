@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#define UNDERLINE "\033[4m"
+#define CLOSEUNDERLINE "\033[0m"
 
 //gets the time and saves it into the struct tm
 struct tm* setTime(time_t* timeinfo, struct tm* myTime){
@@ -65,19 +67,32 @@ void displayTime(time_t* timeinfo, struct tm* myTime){
 void timeSetting(struct tm* myTime){
 	char buffer[80];
 	char ch;
-	int sec, min, hour, year, mon, day = 0;
-	int input[6] = {sec, min, hour, year, mon, day};
+	int location[6] = {4, 7, 10, 15, 18, 21};
 	char* inputDesc[6] = {"second", "minute", "hour", "year",
 		                  "mon", "day"};
 
+	int i, temp;
 	int select = 0; //for choosing which element to be increased 
 
 	mktime(myTime);
 	while(1){
 		system("clear");
-		strftime(buffer, 80, "%a %Y-%m-%d \n %H:%M:%S \n", myTime);
-		puts(buffer);
+		strftime(buffer, 80, "%a %y-%m-%d \n %H:%M:%S \n", myTime);
+		
+		for(i = 0; i < 80; i++){
+			if(i == location[select]){
+				temp = i + 1;
+				printf("%c[4m", 27);
+			}
 
+			printf("%c", buffer[i]);
+
+			if(temp == i){
+				printf("%c[0m",27);
+				temp = -1;
+			}
+		}
+		
 		printf("\n");
 		printf("%s \n", inputDesc[select]);
 		ch = getch();
