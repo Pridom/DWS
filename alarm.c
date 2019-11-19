@@ -13,7 +13,8 @@ char getch(){
 }
 
 void displayAlarm(struct tm* alarmTime){
-	char buffer[40];
+	char buffer[40];	
+	printf( alarmOn != 0 ? " On \n" : " Off \n");
 	strftime(buffer, 80, "%H:%M \n", alarmTime);
 	puts(buffer);
 }
@@ -32,7 +33,7 @@ void displayAlarmSetting(struct tm* alarmTime, int select){
 }
 
 void AlarmOnOff() {
-	alarmOn = 1;
+	alarmOn = !alarmOn;
 	//somehow passes this value to mode controller
 	//In Time Keeping mode this value should be either accessible or should be passed
 	//to the Time keeping mode or the mode controller
@@ -82,11 +83,11 @@ void AlarmSetting(struct tm* alarmTime) {
 void AlarmMode (struct tm* alarmTime) {
 	char ch;
     
+	system("clear");
 	printf("=====ALARM TIME=====\n");
 	//if an alarm indicator is on then it displays "on" and works the other way too
 	printf("Alarm");
-	printf( alarmOn != 0 ? " On \n" : " Off \n");
-	
+		
 	//displays the time given
 	displayAlarm(alarmTime);
 
