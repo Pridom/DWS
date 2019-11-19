@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+
+int alarmOn = 0;
 
 char getch(){
 	char ch;
@@ -9,22 +12,34 @@ char getch(){
 	return ch;
 }
 
-void displayTime(struct tm* alarmTime){
+void displayAlarm(struct tm* alarmTime){
 	char buffer[40];
 	strftime(buffer, 80, "%H:%M \n", alarmTime);
 	puts(buffer);
 }
 
-void AlarmOnOff(int* alarmOn) {
-	*alarmOn = 1;
+void displayAlarmSetting(struct tm* alarmTime, int select){
+	switch(select){
+		case 0:
+			printf("\033[4m%02d\033[0m:%02d\n", alarmTime->tm_hour, alarmTime->tm_min);
+			break;
+		case 1:
+			printf("%02d:\033[4m%02d\033[0m\n", alarmTime->tm_hour, alarmTime->tm_min);
+			break;
+		default:
+			printf("input error \n");
+	}
+}
+
+void AlarmOnOff() {
+	alarmOn = 1;
 	//somehow passes this value to mode controller
 	//In Time Keeping mode this value should be either accessible or should be passed
 	//to the Time keeping mode or the mode controller
 }
 
-void AlarmTimeShift(int* select, char* opt[2]){
+void AlarmTimeShift(int* select){
 	*select = (*select + 1) % 2;
-	printf("%s \n", opt[*select]);
 }
 
 void IncreaseAlarmTime(int select, struct tm* alarmTime){
@@ -41,15 +56,17 @@ void IncreaseAlarmTime(int select, struct tm* alarmTime){
 
 	//updates value
 	mktime(alarmTime);
-	displayTime(alarmTime);
 }
 
 void AlarmSetting(struct tm* alarmTime) {
 	int select = 0;
-	char* option[2] = {"hour", "min"};
+
 	char ch;
 
 	while(1){
+		system("clear");
+		printf("=====ALARM SETTING=====\n");
+		displayAlarmSetting(alarmTime, select);
 		ch = getch();
 
 		if(ch == 'a'){
@@ -57,42 +74,35 @@ void AlarmSetting(struct tm* alarmTime) {
 		} else if(ch == 'b'){
 			IncreaseAlarmTime(select, alarmTime);
 		} else if(ch == 'c') {
-			AlarmTimeShift(&select, option);
+			AlarmTimeShift(&select);
 		}
 	}
 }
 
 void AlarmMode (struct tm* alarmTime) {
-	int alarmOn = 0; //Mode Controller must have control over this variable
-	char buffer[40];
-	char ch = getch();
-	
+	char ch;
     
+	printf("=====ALARM TIME=====\n");
 	//if an alarm indicator is on then it displays "on" and works the other way too
 	printf("Alarm");
 	printf( alarmOn != 0 ? " On \n" : " Off \n");
 	
 	//displays the time given
-	strftime(buffer, 80, "%H:%M \n", alarmTime);
-	puts(buffer);
+	displayAlarm(alarmTime);
+
+	ch = getch();
 
 	if(ch == 'a'){
-		printf("===== Alarm Setting ===== \n");
 		AlarmSetting(alarmTime);
 	} else if(ch == 'b') {
-		AlarmOnOff(&select);
+		AlarmOnOff();
 	}
 }
 
 int main(){
-	time_t timeinfo;
-	struct tm* alarmTime;
+	struct tm* alarmTime = malloc(sizeof(struct tm));
 
-	time(&timeinfo);
-	alarmTime = localtime(&timeinfo);
-
-	alarmTime->tm_hour = 12;
-	alarmTime->tm_min = 0;
+	memset(alarmTime, 0, sizeof(struct tm));
 
 	while(1){
 		AlarmMode(alarmTime);
