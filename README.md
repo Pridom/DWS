@@ -1,5 +1,6 @@
 # DWS
 DWS for software engineering team project
+Has some defects and does not meet some of requirements.
 
 Copyright © 2019 Pridom <pridom1118@gmail.com>
 This work is free. You can redistribute it and/or modify it under the
